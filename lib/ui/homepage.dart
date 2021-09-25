@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -13,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late String _search;
+  String _search = "";
   int _offset = 0;
 
   Future<Map> _getGifs() async {
@@ -37,7 +35,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _getGifs().then((map) {});
+    _getGifs().then((map) {
+      debugPrint(map["data"]);
+    });
   }
 
   @override
@@ -46,24 +46,67 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Image.network(
-          "https://developers.giphy.com/static/img/dev-logo-lg.gif",
+        title: Image.asset(
+          "images/dev-logo-lg.gif",
         ),
         centerTitle: true,
       ),
       body: Column(
         children: [
-          TextField(
-            decoration: InputDecoration(
-              labelText: "Search here",
-              labelStyle: TextStyle(
-                color: Colors.white,
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: "Search here",
+                labelStyle: TextStyle(
+                  color: Colors.white,
+                ),
+                border: OutlineInputBorder(),
+                disabledBorder: OutlineInputBorder(),
               ),
-              border: OutlineInputBorder(),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder(
+              future: _getGifs(),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.none:
+                    return Container(
+                      width: 300,
+                      height: 300,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        strokeWidth: 6.0,
+                      ),
+                    );
+                  default:
+                    if (snapshot.hasError) {
+                      return Container();
+                    } else {
+                      return _createGifTable(context, snapshot);
+                    }
+                }
+              },
             ),
           ),
         ],
       ),
     );
   }
+}
+
+Widget _createGifTable(context, snapshot) {
+  return GridView.builder(
+    padding: EdgeInsets.all(10),
+    gridDelegate: gridDelegate,
+    itemBuilder: itemBuilder,
+  );
 }
