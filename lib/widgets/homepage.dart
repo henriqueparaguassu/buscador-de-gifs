@@ -19,6 +19,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String _search = "";
   int _offset = 0;
+  TextEditingController _searchController = TextEditingController();
 
   Future<Map> _getGifs() async {
     http.Response response;
@@ -30,7 +31,7 @@ class _HomePageState extends State<HomePage> {
     } else {
       response = await http.get(
         Uri.parse(
-            "https://api.giphy.com/v1/gifs/search?api_key=xVzp8tbaWEOp9j7C3YSjSjI8wQo2DFW1&q=$_search&limit=19&offset=$_offset&rating=g&lang=en"),
+            "https://api.giphy.com/v1/gifs/search?api_key=xVzp8tbaWEOp9j7C3YSjSjI8wQo2DFW1&q=$_search&limit=19&offset=$_offset&rating=g&lang=pt"),
       );
     }
 
@@ -116,19 +117,29 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: EdgeInsets.all(20),
             child: TextField(
+              controller: _searchController,
               decoration: InputDecoration(
-                labelText: "Search here",
-                labelStyle: TextStyle(
-                  color: Colors.white,
-                ),
-                border: OutlineInputBorder(),
-                disabledBorder: OutlineInputBorder(),
-              ),
+                  labelText: "Search here",
+                  labelStyle: TextStyle(
+                    color: Colors.white,
+                  ),
+                  border: OutlineInputBorder(),
+                  disabledBorder: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      Icons.cancel,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _searchController.text = "";
+                      });
+                    },
+                  )),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
               ),
-              textAlign: TextAlign.center,
               onSubmitted: (value) {
                 setState(() {
                   _search = value.toString();
