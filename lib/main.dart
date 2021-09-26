@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:buscador_de_gifs/ui/homepage.dart';
+import 'package:buscador_de_gifs/widgets/homepage.dart';
 
 void main() {
   runApp(
